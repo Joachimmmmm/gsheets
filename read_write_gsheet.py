@@ -32,9 +32,6 @@ def main():
         month = 4 # Column D
         row_numbers = {
             "a": 5, # Row of items
-            "b": 5, # Row of expences
-            "c": 5, # Row of income
-            "d": 5, # Row of month
             "e": 0
         }
 
@@ -87,57 +84,72 @@ def main():
         elif input1 == "2": # Input chosen 'write'
             while input1 == "2":
                 input3 = input(write_q)
-                if input3 == "s": # User sold something
-                """
-                Here the user is beigns to input the things that
-                they sold including some more information that
-                will be imputted into the google sheet
-                """
+                if input3 == "s": # user sold something
+                    ru = open("row_used.txt", 'r+')
+                    rut = open("row_used_temp.txt", 'r+')
+                    content = ru.readlines()
+                    content1 = rut.readlines()
+                    a = 0
+                    b = 0
+                    for line in content:
+                        for i in line:
+                            if i.isdigit() == True:
+                                a += int(i)
+                                a += 1
+                    rut.truncate(0)
+                    rut.write('%d' % a)
+                    for line in content1:
+                        for i in line:
+                            if i.isdigit() == True:
+                                b += int(i)
+                    ru.truncate(0)
+                    ru.write('%d' % a)
                     item_sold = input("What did you sell?: ")
-                    sheet.update_cell(row_numbers["a"],item, item_sold)
-                    sheet.update_cell(row_numbers["b"],expense, row_numbers['e']) # This 'e'(0) is here since the user didn't actually lose
+                    sheet.update_cell(a,item, item_sold)
+                    sheet.update_cell(a,expense, row_numbers['e']) # This 'e'(0) is here since the user didn't actually lose
                     income_price = input("How much did you sell it for?: ")       # any money, it will fill in the cell marked 'expences'
-                    sheet.update_cell(row_numbers["c"],income, income_price)      # to 0
+                    sheet.update_cell(a,income, income_price)      # to 0
                     month_sold = input("In what month did you make the sale?(eg. Aug): ")
-                    sheet.update_cell(row_numbers["d"],month, month_sold)
-                    if "a" in row_numbers:
-                        row_numbers["a"] += 1
-                    elif "b" in row_numbers:
-                        row_numbers["b"] += 1
-                    elif "c" in row_numbers:
-                        row_numbers["c"] += 1
-                    elif "d" in row_numbers:
-                        row_numbers["d"] += 1
-                    else:
-                        break
+                    sheet.update_cell(a,month, month_sold)
+
+                    ru.close()
+                    rut.close()
+
                 elif input3 == "b": # User bought something
-                """
-                Here the user is beigns to input the things that
-                they have bought and also other information that
-                will be imputted into the google sheet
-                """
+                    ru = open("row_used.txt", 'r+')
+                    rut = open("row_used_temp.txt", 'r+')
+                    content = ru.readlines()
+                    content1 = rut.readlines()
+                    a = 0
+                    b = 0
+                    for line in content:
+                        for i in line:
+                            if i.isdigit() == True:
+                                a += int(i)
+                                a += 1
+                    rut.truncate(0)
+                    rut.write('%d' % a)
+                    for line in content1:
+                        for i in line:
+                            if i.isdigit() == True:
+                                b += int(i)
+                    ru.truncate(0)
+                    ru.write('%d' % a)
                     item_bought = input("What did you buy?: ")
-                    sheet.update_cell(row_numbers["a"],item, item_bought)
+                    sheet.update_cell(a,item, item_bought)
                     item_expense = input("How much was the item?: ")
-                    sheet.update_cell(row_numbers["b"],expense, item_expense)
-                    sheet.update_cell(row_numbers["c"],income, row_numbers['e']) # again 'e' is the value 0 since user isn't making income
+                    sheet.update_cell(a,expense, item_expense)
+                    sheet.update_cell(a,income, row_numbers['e']) # again 'e' is the value 0 since user isn't making income
                     month_sold = input("In what month did you make the sale?(eg. Aug): ")
-                    sheet.update_cell(row_numbers["d"],month, month_sold)
-                    if "a" in row_numbers:
-                        row_numbers["a"] += 1
-                    elif "b" in row_numbers:
-                        row_numbers["b"] += 1
-                    elif "c" in row_numbers:  # This is still a working part as
-                        row_numbers["c"] += 1 # I'm not sure on how to perm
-                    elif "d" in row_numbers:  # update a dictionary, it's meant
-                        row_numbers["d"] += 1 # to add one to the row in which
-                    else:                     # its in which constantly adds more
-                        row_numbers["d"] = 1  # data further down on the sheet
-                    break
+                    sheet.update_cell(a,month, month_sold)
+
+                    ru.close()
+                    rut.close()
+
                 elif input3 == "q":
+                    program_run = False
                     break
-                else:
-                    print(error_message)
+
         else:
             print(error_message)
 main()
