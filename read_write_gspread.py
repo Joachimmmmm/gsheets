@@ -5,7 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
 client = gspread.authorize(creds)
-sheet = client.open("[google_sheet_name]").sheet1
+sheet = client.open("Budget").sheet1
 
 data = sheet.get_all_records() # Get all the info from the sheet
 row = sheet.row_values(1) # get values from given row
@@ -85,66 +85,48 @@ def main():
             while input1 == "2":
                 input3 = input(write_q)
                 if input3 == "s": # user sold something
-                    ru = open("row_used.txt", 'r+')
-                    rut = open("row_used_temp.txt", 'r+')
-                    content = ru.readlines()
-                    content1 = rut.readlines()
-                    a = 0
-                    b = 0
-                    for line in content:
-                        for i in line:
-                            if i.isdigit() == True:
-                                a += int(i)
-                                a += 1
-                    rut.truncate(0)
-                    rut.write('%d' % a)
-                    for line in content1:
-                        for i in line:
-                            if i.isdigit() == True:
-                                b += int(i)
-                    ru.truncate(0)
-                    ru.write('%d' % a)
-                    item_sold = input("What did you sell?: ")
-                    sheet.update_cell(a,item, item_sold)
-                    sheet.update_cell(a,expense, row_numbers['e']) # This 'e'(0) is here since the user didn't actually lose
-                    income_price = input("How much did you sell it for?: ")       # any money, it will fill in the cell marked 'expences'
-                    sheet.update_cell(a,income, income_price)      # to 0
-                    month_sold = input("In what month did you make the sale?(eg. Aug): ")
-                    sheet.update_cell(a,month, month_sold)
+                    with open("row_used.json") as ru:
+                        number = json.load(ru)
+                        a = 0
+                        a += int(number)        # Code used to contantly move
+                        a += 1                  # down rows when inputting new
+                                                # data so that the data doesn't
+                                                # overlap.
+                    with open("row_used.json", 'w') as ru:
+                        ru.truncate(0)
+                        json.dump(a, ru)
 
-                    ru.close()
-                    rut.close()
+                        item_sold = input("What did you sell?: ")
+                        sheet.update_cell(a,item, item_sold)
+                        sheet.update_cell(a,expense, row_numbers['e']) # This 'e'(0) is here since the user didn't actually lose
+                        income_price = input("How much did you sell it for?: ")       # any money, it will fill in the cell marked 'expences'
+                        sheet.update_cell(a,income, income_price)      # to 0
+                        month_sold = input("In what month did you make the sale?(eg. Aug): ")
+                        sheet.update_cell(a,month, month_sold)
 
+                        ru.close()
                 elif input3 == "b": # User bought something
-                    ru = open("row_used.txt", 'r+')
-                    rut = open("row_used_temp.txt", 'r+')
-                    content = ru.readlines()
-                    content1 = rut.readlines()
-                    a = 0
-                    b = 0
-                    for line in content:
-                        for i in line:
-                            if i.isdigit() == True:
-                                a += int(i)
-                                a += 1
-                    rut.truncate(0)
-                    rut.write('%d' % a)
-                    for line in content1:
-                        for i in line:
-                            if i.isdigit() == True:
-                                b += int(i)
-                    ru.truncate(0)
-                    ru.write('%d' % a)
-                    item_bought = input("What did you buy?: ")
-                    sheet.update_cell(a,item, item_bought)
-                    item_expense = input("How much was the item?: ")
-                    sheet.update_cell(a,expense, item_expense)
-                    sheet.update_cell(a,income, row_numbers['e']) # again 'e' is the value 0 since user isn't making income
-                    month_sold = input("In what month did you make the sale?(eg. Aug): ")
-                    sheet.update_cell(a,month, month_sold)
+                    with open("row_used.json") as ru:
+                        number = json.load(ru)
+                        a = 0
+                        a += int(number)        # Code used to contantly move
+                        a += 1                  # down rows when inputting new
+                                                # data so that the data doesn't
+                                                # overlap.
+                    with open("row_used.json", 'w') as ru:
+                        ru.truncate(0)
+                        json.dump(a, ru)
 
-                    ru.close()
-                    rut.close()
+                        item_bought = input("What did you buy?: ")
+                        sheet.update_cell(a,item, item_bought)
+                        item_expense = input("How much was the item?: ")
+                        sheet.update_cell(a,expense, item_expense)
+                        sheet.update_cell(a,income, row_numbers['e']) # again 'e' is the value 0 since user isn't making income
+                        month_sold = input("In what month did you make the sale?(eg. Aug): ")
+                        sheet.update_cell(a,month, month_sold)
+
+                        ru.close()
+
 
                 elif input3 == "q":
                     program_run = False
